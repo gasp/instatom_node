@@ -30,7 +30,7 @@ const fetchlatency = probe.histogram({
 });
 
 const parselatency = probe.histogram({
-  name: 'fetch latency',
+  name: 'parse latency',
   measurement: 'mean'
 });
 
