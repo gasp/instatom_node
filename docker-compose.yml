@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  instatom:
+    container_name: instatom
+    build: .
+    environment:
+      - PORT=4032
+    expose:
+      - 4032
+    ports:
+    - "4032:4032"

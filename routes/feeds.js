@@ -5,7 +5,6 @@ var request = require('request');
 
 /* GET users listing. */
 router.get('/:username', function(req, res, next) {
-  const sample = require('../lib/sample.json');
   request('https://instagram.com/' + req.params.username + '/media', function (error, response, body) {
     if (error) {
       return res.send('unreachable');
