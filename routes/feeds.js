@@ -18,6 +18,12 @@ const unparsable = probe.meter({
   timeframe: 60
 });
 
+const unreachable = probe.meter({
+  name: 'unreachable/sec',
+  sample: 1,
+  timeframe: 60
+});
+
 const fetchlatency = probe.histogram({
   name: 'fetch latency',
   measurement: 'mean'
@@ -35,9 +41,10 @@ router.get('/:username', function(req, res, next) {
   meter.mark();
   request('https://instagram.com/' + req.params.username + '/media', function (error, response, body) {
     const fetchTime = new Date();
-    fetchlatency.update(startTime.getTime() - fetchTime.getTime());
+    fetchlatency.update(fetchTime.getTime() - startTime.getTime());
 
     if (error) {
+      unreachable.mark();
       return res.send('unreachable');
     }
     let json = {}
@@ -48,7 +55,7 @@ router.get('/:username', function(req, res, next) {
       return res.send('unparsable');
     }
     const endTime = new Date();
-    parselatency.update(fetchTime.getTime() - endTime.getTime());
+    parselatency.update(endTime.getTime() - fetchTime.getTime());
     return res.render('feed', {feed: i2a(json)});
   });
 });
