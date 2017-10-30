@@ -12,7 +12,7 @@ feed(xmlns="http://www.w3.org/2005/Atom",xmlns:dc="http://purl.org/dc/elements/1
       title= pic.caption
       link(rel="alternate",type="text/html",href=pic.link)
       id tag:instagram.com,#{pic.created_time}
-      published 2017-01-01T17:10:10Z
+      published= pic.created_time
       updated= pic.created_time
       content(type="image") &lt;img src=&quot;#{pic.thumbnail_url}&quot; width=&quot;640&quot; height=&quot;640&quot; alt=&quot;#{pic.caption}&quot; /&gt; #{pic.caption}
       author
