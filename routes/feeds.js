@@ -56,6 +56,9 @@ router.get('/:username', function(req, res, next) {
     }
     const endTime = new Date();
     parselatency.update(endTime.getTime() - fetchTime.getTime());
+    if (typeof json.items !== 'undefined' && json.items.length === 0) {
+      return res.send('inexistan, empty or private');
+    }
     return res.render('feed', {feed: i2a(json)});
   });
 });
