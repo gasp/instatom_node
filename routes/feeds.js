@@ -4,6 +4,7 @@ const i2a = require('../lib/instagramjson2atom');
 const request = require('request');
 const redis = require('redis');
 const ns = 'instatom:'; // redis namespace
+const time = 60 * 60 * 12; // basic cache time, 12 hours
 
 const probe = require('pmx').probe();
 
@@ -66,7 +67,7 @@ router.get('/:username', function(req, res, next) {
         if (error) {
           unreachable.mark();
           res.append('unreachable');
-          red.setex(req.params.username, 60 * 4, JSON.stringify(emptyFeed));
+          red.setex(req.params.username, time * 4, JSON.stringify(emptyFeed));
           return res.render('feed', {feed: emptyFeed});
         }
         let json = {}
@@ -75,7 +76,7 @@ router.get('/:username', function(req, res, next) {
         } catch (e) {
           unparsable.mark();
           res.append('unparsable');
-          red.setex(req.params.username, 60 * 60 * 24, JSON.stringify(emptyFeed));
+          red.setex(req.params.username, time * 10, JSON.stringify(emptyFeed));
           return res.render('feed', {feed: emptyFeed});
         }
         const endTime = new Date();
@@ -84,7 +85,7 @@ router.get('/:username', function(req, res, next) {
           return res.send('inexistan, empty or private');
         }
         const feed = i2a(json);
-        red.setex(ns + req.params.username, 60, JSON.stringify(feed));
+        red.setex(ns + req.params.username, time, JSON.stringify(feed));
 
         return res.render('feed', {feed: feed});
       });
