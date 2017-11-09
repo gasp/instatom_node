@@ -1,44 +1,45 @@
 const express = require('express');
-const router = express.Router();
 const i2a = require('../lib/instagramjson2atom');
 const request = require('request');
 const redis = require('redis');
+
+const router = express.Router();
 const ns = 'instatom:'; // redis namespace
 const time = 60 * 60 * 12; // basic cache time, 12 hours
 
 const probe = require('pmx').probe();
 
-const red = redis.createClient({port:6379, host:'localhost'});
-red.on('error', function (err) {
-    console.log("Error " + err);
+const red = redis.createClient({ port: 6379, host: 'localhost' });
+red.on('error', (err) => {
+  console.log(`Error  ${err}`);
 });
 
 const meter = probe.meter({
   name: 'req/sec',
   samples: 1,
-  timeframe: 60
+  timeframe: 60,
 });
 
 const unparsable = probe.meter({
   name: 'unparsable/sec',
   sample: 1,
-  timeframe: 60
+  timeframe: 60,
 });
 
 const unreachable = probe.meter({
   name: 'unreachable/sec',
   sample: 1,
-  timeframe: 60
+  timeframe: 60,
 });
 
 const fetchlatency = probe.histogram({
   name: 'fetch latency',
-  measurement: 'mean'
+  measurement: 'mean',
 });
 
 const parselatency = probe.histogram({
   name: 'parse latency',
-  measurement: 'mean'
+  measurement: 'mean',
 });
 
 const emptyFeed = [{
@@ -47,20 +48,23 @@ const emptyFeed = [{
   thumbnail_url: 'https://scontent-bru2-1.cdninstagram.com/t51.2885-15/s640x640/sh0.08/e35/22581849_1873072349384757_96953921725005824_n.jpg',
   caption: 'this profile is unavailable',
   username: 'ryogasp',
-  full_name: 'error'
+  full_name: 'error',
 }];
 
 /* GET users listing. */
-router.get('/:username', function(req, res, next) {
+router.get('/:username', (req, res) => {
   const startTime = new Date();
   meter.mark();
   red.get(ns + req.params.username, (err, result) => {
+    if (err) {
+      console.log(err)
+    }
     if (result) {
       res.append('source', 'redis');
       console.log('from redis', result, result.toString())
       return res.render('feed', {feed: JSON.parse(result)});
     } else {
-      request('https://instagram.com/' + req.params.username + '/media', function (error, response, body) {
+      request(`https://instagram.com/${req.params.username}/media`, (error, response, body) => {
         const fetchTime = new Date();
         fetchlatency.update(fetchTime.getTime() - startTime.getTime());
 
@@ -86,7 +90,6 @@ router.get('/:username', function(req, res, next) {
         }
         const feed = i2a(json);
         red.setex(ns + req.params.username, time, JSON.stringify(feed));
-
         return res.render('feed', {feed: feed});
       });
     }
