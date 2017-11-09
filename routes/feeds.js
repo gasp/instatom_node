@@ -61,7 +61,6 @@ router.get('/:username', (req, res) => {
     }
     if (result) {
       res.append('source', 'redis');
-      console.log('from redis', result, result.toString())
       return res.render('feed', {feed: JSON.parse(result)});
     } else {
       request(`https://instagram.com/${req.params.username}/?__a=1`, (error, response, body) => {
