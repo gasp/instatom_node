@@ -64,7 +64,7 @@ router.get('/:username', (req, res) => {
       console.log('from redis', result, result.toString())
       return res.render('feed', {feed: JSON.parse(result)});
     } else {
-      request(`https://instagram.com/${req.params.username}/media`, (error, response, body) => {
+      request(`https://instagram.com/${req.params.username}/?__a=1`, (error, response, body) => {
         const fetchTime = new Date();
         fetchlatency.update(fetchTime.getTime() - startTime.getTime());
 
