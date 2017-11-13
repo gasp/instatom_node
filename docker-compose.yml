@@ -10,3 +10,7 @@ services:
       - 4032
     ports:
     - "4032:4032"
+  redis:
+    image: redis:3.2-2.1.2
+    ports:
+      - '6379:6379'

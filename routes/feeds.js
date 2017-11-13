@@ -2,14 +2,15 @@ const express = require('express');
 const i2a = require('../lib/instagramjson2atom');
 const request = require('request');
 const redis = require('redis');
+const c = require('../config');
 
 const router = express.Router();
-const ns = 'instatom:'; // redis namespace
-const time = 60 * 60 * 12; // basic cache time, 12 hours
+
+const { redis: { namespace: ns }, cache: { time } } = c;
 
 const probe = require('pmx').probe();
 
-const red = redis.createClient({ port: 6379, host: 'localhost' });
+const red = redis.createClient({ port: c.redis.port, host: c.redis.host });
 red.on('error', (err) => {
   console.log(`Error  ${err}`);
 });
@@ -57,41 +58,40 @@ router.get('/:username', (req, res) => {
   meter.mark();
   red.get(ns + req.params.username, (err, result) => {
     if (err) {
-      console.log(err)
+      console.log(err);
     }
     if (result) {
       res.append('source', 'redis');
-      return res.render('feed', {feed: JSON.parse(result)});
-    } else {
-      request(`https://instagram.com/${req.params.username}/?__a=1`, (error, response, body) => {
-        const fetchTime = new Date();
-        fetchlatency.update(fetchTime.getTime() - startTime.getTime());
-
-        if (error) {
-          unreachable.mark();
-          res.append('unreachable');
-          red.setex(req.params.username, time * 4, JSON.stringify(emptyFeed));
-          return res.render('feed', {feed: emptyFeed});
-        }
-        let json = {}
-        try {
-          json = JSON.parse(body)
-        } catch (e) {
-          unparsable.mark();
-          res.append('unparsable');
-          red.setex(req.params.username, time * 10, JSON.stringify(emptyFeed));
-          return res.render('feed', {feed: emptyFeed});
-        }
-        const endTime = new Date();
-        parselatency.update(endTime.getTime() - fetchTime.getTime());
-        if (typeof json.items !== 'undefined' && json.items.length === 0) {
-          return res.send('inexistan, empty or private');
-        }
-        const feed = i2a(json);
-        red.setex(ns + req.params.username, time, JSON.stringify(feed));
-        return res.render('feed', {feed: feed});
-      });
+      return res.render('feed', { feed: JSON.parse(result) });
     }
+    return request(`https://instagram.com/${req.params.username}/?__a=1`, (error, response, body) => {
+      const fetchTime = new Date();
+      fetchlatency.update(fetchTime.getTime() - startTime.getTime());
+
+      if (error) {
+        unreachable.mark();
+        res.append('unreachable');
+        red.setex(req.params.username, time * 4, JSON.stringify(emptyFeed));
+        return res.render('feed', { feed: emptyFeed });
+      }
+      let json = {};
+      try {
+        json = JSON.parse(body);
+      } catch (e) {
+        unparsable.mark();
+        res.append('unparsable');
+        red.setex(req.params.username, time * 10, JSON.stringify(emptyFeed));
+        return res.render('feed', { feed: emptyFeed });
+      }
+      const endTime = new Date();
+      parselatency.update(endTime.getTime() - fetchTime.getTime());
+      if (typeof json.items !== 'undefined' && json.items.length === 0) {
+        return res.send('inexistan, empty or private');
+      }
+      const feed = i2a(json);
+      red.setex(ns + req.params.username, time, JSON.stringify(feed));
+      return res.render('feed', { feed });
+    });
   });
 });
 
