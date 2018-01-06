@@ -1,6 +1,6 @@
 module.exports = {
   services: {
-    pmx: true, // enable pmx
+    pmx: false, // disable pmx
     redis: true, // enable redis
   },
   redis: {
