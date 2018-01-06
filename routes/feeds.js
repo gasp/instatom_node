@@ -1,7 +1,8 @@
 const express = require('express');
-const i2a = require('../lib/instagramjson2atom');
 const request = require('request');
 const redis = require('redis');
+
+const i2a = require('../lib/instagramjson2atom');
 const c = require('../config');
 
 const router = express.Router();
@@ -15,7 +16,7 @@ red.on('error', (err) => {
   console.log(`Error  ${err}`);
 });
 
-const meter = probe.meter({
+const traffic = probe.meter({
   name: 'req/sec',
   samples: 1,
   timeframe: 60,
@@ -55,8 +56,9 @@ const emptyFeed = [{
 /* GET users listing. */
 router.get('/:username', (req, res) => {
   const startTime = new Date();
-  meter.mark();
-  red.get(ns + req.params.username, (err, result) => {
+  const { username } = req.params;
+  traffic.mark();
+  red.get(ns + username, (err, result) => {
     if (err) {
       console.log(err);
     }
@@ -64,14 +66,14 @@ router.get('/:username', (req, res) => {
       res.append('source', 'redis');
       return res.render('feed', { feed: JSON.parse(result) });
     }
-    return request(`https://instagram.com/${req.params.username}/?__a=1`, (error, response, body) => {
+    return request(`https://instagram.com/${username}/?__a=1`, (error, response, body) => {
       const fetchTime = new Date();
       fetchlatency.update(fetchTime.getTime() - startTime.getTime());
 
       if (error) {
         unreachable.mark();
         res.append('unreachable');
-        red.setex(req.params.username, time * 4, JSON.stringify(emptyFeed));
+        red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
       let json = {};
@@ -80,7 +82,7 @@ router.get('/:username', (req, res) => {
       } catch (e) {
         unparsable.mark();
         res.append('unparsable');
-        red.setex(req.params.username, time * 10, JSON.stringify(emptyFeed));
+        red.setex(username, time * 10, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
       const endTime = new Date();
@@ -89,8 +91,12 @@ router.get('/:username', (req, res) => {
         return res.send('inexistan, empty or private');
       }
       const feed = i2a(json);
-      red.setex(ns + req.params.username, time, JSON.stringify(feed));
-      return res.render('feed', { feed });
+      red.setex(ns + username, time, JSON.stringify(feed));
+      return res.render('feed', {
+        thumbnail_url: (feed.length) ? feed[0].thumbnail_url : '',
+        username,
+        feed,
+      });
     });
   });
 });

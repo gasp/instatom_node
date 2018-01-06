@@ -1,4 +1,8 @@
 module.exports = {
+  services: {
+    pmx: true, // enable pmx
+    redis: true, // enable redis
+  },
   redis: {
     host: 'localhost',
     port: 6379,

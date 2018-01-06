@@ -1,9 +1,9 @@
 doctype xml
 feed(xmlns="http://www.w3.org/2005/Atom",xmlns:dc="http://purl.org/dc/elements/1.1/",xmlns:media="http://search.yahoo.com/mrss/")
-  title Pictures from instagram #{feed[0].username}
-  link(rel="alternate", type="text/html" href="http://instagram.com/" + feed[0].username)
-  id tag:instatom:/#{feed[0].username}
-  icon= feed[0].thumbnail_url
+  title Pictures from instagram #{username}
+  link(rel="alternate", type="text/html" href="http://instagram.com/" + username)
+  id tag:instatom:/#{username}
+  icon= thumbnail_url
   subtitle
   updated 
   generator(uri="http://instatom.freelancis.net/") instatom
