@@ -30,12 +30,12 @@ router.get('/:username', (req, res) => {
       console.log(err);
     }
     if (result) {
-      res.append('source', 'redis');
+      res.append('Source', 'redis');
       return res.render('feed', { feed: JSON.parse(result) });
     }
     return request(`https://instagram.com/${username}/?__a=1`, (error, response, body) => {
       if (error) {
-        res.append('unreachable');
+        res.append('Exception', 'unreachable');
         red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
@@ -43,7 +43,7 @@ router.get('/:username', (req, res) => {
       try {
         json = JSON.parse(body);
       } catch (e) {
-        res.append('unparsable');
+        res.append('Exception', 'unparsable');
         red.setex(username, time * 10, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
@@ -52,6 +52,7 @@ router.get('/:username', (req, res) => {
       }
       const feed = i2a(json);
       red.setex(ns + username, time, JSON.stringify(feed));
+      res.append('Source', 'instagram');
       return res.render('feed', {
         thumbnail_url: (feed.length) ? feed[0].thumbnail_url : '',
         username,
