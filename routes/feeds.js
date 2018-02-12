@@ -39,16 +39,25 @@ router.get('/:username', (req, res) => {
         red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
+      if (res.statusCode === 404) {
+        res.append('Exception', '404');
+        red.setex(username, time * 4, JSON.stringify(emptyFeed));
+        return res.render('feed', { feed: emptyFeed });
+      }
       let json = {};
       try {
         json = JSON.parse(body);
       } catch (e) {
+        console.log(e);
         res.append('Exception', 'unparsable');
         red.setex(username, time * 10, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
-      if (typeof json.items !== 'undefined' && json.items.length === 0) {
-        return res.send('inexistan, empty or private');
+      if (Object.prototype.hasOwnProperty.call(json.user, 'media') === false ||
+        Object.prototype.hasOwnProperty.call(json.user.media, 'nodes') === false) {
+        res.append('Exception', 'noitems');
+        red.setex(username, time * 4, JSON.stringify(emptyFeed));
+        return res.render('feed', { feed: emptyFeed });
       }
       const feed = i2a(json);
       red.setex(ns + username, time, JSON.stringify(feed));
