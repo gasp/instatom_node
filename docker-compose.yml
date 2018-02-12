@@ -6,10 +6,14 @@ services:
     build: .
     environment:
       - PORT=4032
+      - REDIS_HOST=redis
     expose:
       - 4032
     ports:
     - "4032:4032"
+    volumes:
+      - .:/usr/src/app
+      - "/usr/src/app/node_modules"
   redis:
     image: redis:3.2.11
     ports:
