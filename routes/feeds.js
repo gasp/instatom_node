@@ -48,7 +48,6 @@ router.get('/:username', (req, res) => {
       try {
         json = JSON.parse(body);
       } catch (e) {
-        console.log(e);
         res.append('Exception', 'unparsable');
         red.setex(username, time * 10, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
