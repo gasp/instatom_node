@@ -39,8 +39,13 @@ router.get('/:username', (req, res) => {
         red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
-      if (res.statusCode === 404) {
-        res.append('Exception', '404');
+      if (res.statusCode !== 200) {
+        res.append('Exception', 'not200');
+        red.setex(username, time * 4, JSON.stringify(emptyFeed));
+        return res.render('feed', { feed: emptyFeed });
+      }
+      if (res.contentType !== 'application/json') {
+        res.append('Exception', 'notjson');
         red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
