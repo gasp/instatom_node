@@ -57,8 +57,8 @@ router.get('/:username', (req, res) => {
         red.setex(username, time * 10, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
-      if (Object.prototype.hasOwnProperty.call(json.user, 'media') === false ||
-        Object.prototype.hasOwnProperty.call(json.user.media, 'nodes') === false) {
+      const medias = (((((json || {}).graphql || {}).user || {}).edge_owner_to_timeline_media || {}).edges || 'noitem');
+      if (medias === 'noitem') {
         res.append('Exception', 'noitems');
         red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
