@@ -39,12 +39,12 @@ router.get('/:username', (req, res) => {
         red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
-      if (res.statusCode !== 200) {
+      if (response.statusCode !== 200) {
         res.append('Exception', 'not200');
         red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
       }
-      if (res.contentType !== 'application/json') {
+      if (response.headers['content-type'] !== 'application/json') {
         res.append('Exception', 'notjson');
         red.setex(username, time * 4, JSON.stringify(emptyFeed));
         return res.render('feed', { feed: emptyFeed });
