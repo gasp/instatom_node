@@ -1,15 +1,15 @@
+/* global it, describe, expect */
 const instagramjson2atom = require('../lib/instagramjson2atom');
 const jsonString = require('./mock.json');
 
 describe('instagram2json', () => {
   const json = instagramjson2atom(jsonString);
   const empty = {
-    json: {
-      graphql: {
-        user: {
-          edge_owner_to_timeline_media: {
-            edges: [],
-          },
+    graphql: {
+      user: {
+        username: 'some_username',
+        edge_owner_to_timeline_media: {
+          edges: [],
         },
       },
     },
