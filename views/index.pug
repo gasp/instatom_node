@@ -1,51 +1,57 @@
-extends layout
-
-block content
-  .jumbotron
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    meta(charset="utf-8")
+    meta(name='viewport',content='width=device-width, initial-scale=1')
+  body
+    .jumbotron
+      .container
+        .row
+          .col-lg-12
+            h1=title
+            p.lead
+              label.control-label(for="un") get atom feeds from instagram
+            div.form-group
+              form
+                div.input-group.input-group-lg
+                  input.form-control#un(type="text",placeholder="Instagram username")
+                  span.input-group-btn
+                    input.btn.btn-default(type="submit",value="Grab")
     .container
       .row
-        .col-lg-12
-          h1=title
-          p.lead
-            label.control-label(for="un") get atom feeds from instagram
-          div.form-group
-            form
-              div.input-group.input-group-lg
-                input.form-control#un(type="text",placeholder="Instagram username")
-                span.input-group-btn
-                  input.btn.btn-default(type="submit",value="Grab")
-  .container
-    .row
-      .col-md-4.col-sm-2.hidden-xs
-        svg
-      .col-md-4.col-sm-5
-        h2 What is this about?
-        p You are using a feed reader such as Apple mail,  Feedbin, Feedly, Feed Wrangler, 
-        | FeedHQ, NewsBlur, The Old Reader, Inoreader, Minimal Reader, 
-        | BazQux Reader, Fever, Readability or Reeder and you'd like to follow some folks
-        | on instagram ? This is a link between instagram and your favorite reader !
-      .col-md-4.col-sm-5
-        h2 How to use it ?
-        p Subscribe to 
-          code http://instatom.freelancis.net/
+        .col-md-4.col-sm-2.hidden-xs
+          svg
+        .col-md-4.col-sm-5
+          h2 What is this about?
+          p You are using a feed reader such as Apple mail,  Feedbin, Feedly, Feed Wrangler, 
+          | FeedHQ, NewsBlur, The Old Reader, Inoreader, Minimal Reader, 
+          | BazQux Reader, Fever, Readability or Reeder and you'd like to follow some folks
+          | on instagram ? This is a link between instagram and your favorite reader !
+        .col-md-4.col-sm-5
+          h2 How to use it ?
+          p Subscribe to 
+            code http://instatom.freelancis.net/
+              b username
+            |  where 
             b username
-          |  where 
-          b username
-          |  is your instagram user name.
-      p Try my feed for example : 
-        a(href="http://instatom.freelancis.net/ryogasp",title="atom feed") http://instatom.freelancis.net/ryogasp
-  
-  
-  footer.contentinfo
-    .container
-      hr
-      p Instagram is a trademark from Facebook, Inc. This script 
-        | is not affiliated with this brand, it just uses a public API
-      p Built with love by 
-        a(href="http://github.com/gasp") gasp
-        | . Please do not use this ressource too extensively, instead, 
-        a(href="http://github.com/gasp/instatom_node") install your own instance
-        | .
+            |  is your instagram user name.
+        p Try my feed for example : 
+          a(href="http://instatom.freelancis.net/ryogasp",title="atom feed") http://instatom.freelancis.net/ryogasp
+    
+    
+    footer.contentinfo
+      .container
+        hr
+        p Instagram is a trademark from Facebook, Inc. This script 
+          | is not affiliated with this brand, it just uses a public API
+        p Built with love by 
+          a(href="http://github.com/gasp") gasp
+          | . Please do not use this ressource too extensively, instead, 
+          a(href="http://github.com/gasp/instatom_node") install your own instance
+          | .
 
-  a(href="https://github.com/gasp/instatom_node")
-    img(style="position: absolute; top: 0; right: 0; border: 0;",src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67",alt="Fork me on GitHub",data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png")
+    a(href="https://github.com/gasp/instatom_node")
+      img(style="position: absolute; top: 0; right: 0; border: 0;",src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67",alt="Fork me on GitHub",data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png")
