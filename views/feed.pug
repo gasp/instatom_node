@@ -1,21 +1,21 @@
 doctype xml
 feed(xmlns="http://www.w3.org/2005/Atom",xmlns:dc="http://purl.org/dc/elements/1.1/",xmlns:media="http://search.yahoo.com/mrss/")
-  title Pictures from instagram #{username}
-  link(rel="alternate", type="text/html" href="http://instagram.com/" + username)
-  id tag:instatom:/#{username}
-  icon= thumbnail_url
+  title Pictures from instagram #{user.username}
+  link(rel="alternate", type="text/html" href="http://instagram.com/" + user.username)
+  id tag:instatom:/#{user.username}
+  // icon= thumbnail_url
   subtitle
   updated 
   generator(uri="http://instatom.freelancis.net/") instatom
-  each pic in feed
+  each post in posts
     entry
-      title= pic.caption
-      link(rel="alternate",type="text/html",href=pic.link)
-      id tag:instagram.com,#{pic.created_time}
-      published= pic.created_time
-      updated= pic.created_time
-      content(type="image") &lt;img src=&quot;#{pic.thumbnail_url}&quot; width=&quot;640&quot; height=&quot;640&quot; alt=&quot;#{pic.caption}&quot; /&gt; #{pic.caption}
+      title= post.caption
+      link(rel="alternate",type="text/html",href=post.src)
+      id tag:instagram.com,#{post.created_time}
+      published= post.created_time
+      updated= post.created_time
+      content(type="image") &lt;img src=&quot;#{post.src}&quot; width=&quot;640&quot; height=&quot;640&quot; alt=&quot;#{post.caption}&quot; /&gt; #{post.caption}
       author
-        name= pic.full_name
-        uri http://instagram.com/#{pic.username}
-      link(rel="enclosure",type="image/jpeg",href=pic.thumbnail_url)
+        name= user.full_name
+        uri http://instagram.com/#{user.username}
+      link(rel="enclosure",type="image/jpeg",href=post.src)

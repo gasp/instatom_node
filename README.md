@@ -4,7 +4,7 @@ Convert instagram JSON feeds to atom feeds
 try it on [http://instatom.freelancis.net](http://instatom.freelancis.net)
 
 
-This script is written in Nodejs, based on Express.
+This script is written in Nodejs, based on Koa.
 It is a javascript port of [instatom (the PHP version)](https://github.com/gasp/instatom)
 
 -----

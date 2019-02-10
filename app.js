@@ -1,48 +1,28 @@
-const express = require('express');
-const path = require('path');
-const favicon = require('serve-favicon');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const stylus = require('stylus');
+const Koa = require('koa')
+const route = require('koa-route')
 
-const index = require('./routes/index');
-const feeds = require('./routes/feeds');
+const view = require('./lib/view.js')
+const feedController = require('./controller/feed.js')
 
-const app = express();
+const app = new Koa()
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(
+  route.get('/', ctx => {
+    ctx.body = view.render('index', {title: 'instatom'})
+  })
+)
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+app.use(
+  route.get('/:name', async (ctx, username) => {
+    const {error, feed, source} = await feedController.get(username)
+    if (error) {
+      ctx.response.status = 404
+      ctx.response.body = `error viewing user ${username}`
+    }
+    ctx.response.set('X-Source', source)
+    ctx.response.body = view.render('feed', feed)
+  })
+)
 
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(stylus.middleware(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', index);
-app.use('/', feeds);
-
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handler
-app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app;
+app.listen(4032)
+console.log('listening on port 4032')
