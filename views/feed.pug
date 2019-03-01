@@ -10,7 +10,7 @@ feed(xmlns="http://www.w3.org/2005/Atom",xmlns:dc="http://purl.org/dc/elements/1
   each post in posts
     entry
       title= post.caption
-      link(rel="alternate",type="text/html",href=post.src)
+      link(rel="alternate",type="text/html",href=post.url)
       id tag:instagram.com,#{post.created_time}
       published= post.created_time
       updated= post.created_time
