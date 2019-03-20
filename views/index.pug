@@ -15,9 +15,9 @@ html
             p.lead
               label.control-label(for="un") get atom feeds from instagram
             div.form-group
-              form
+              form(action="/",method="post")
                 div.input-group.input-group-lg
-                  input.form-control#un(type="text",placeholder="Instagram username")
+                  input.form-control#un(type="text",placeholder="Instagram username",name="username")
                   span.input-group-btn
                     input.btn.btn-default(type="submit",value="Grab")
     .container

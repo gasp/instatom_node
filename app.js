@@ -12,6 +12,31 @@ app.use(
   })
 )
 
+function bodyParser(req) {
+  return new Promise((resolve, reject) => {
+    let body = ''
+    req.on('data', chunk => {
+      body += chunk.toString()
+    })
+    req.on('end', () => {
+      const username = String(body).substring(9)
+      if(username.length) resolve(username)
+      else reject()
+    })
+  })
+}
+
+app.use(
+  route.post('/', async ctx => {
+    try {
+      const username = await bodyParser(ctx.req)
+      ctx.redirect(`/${username}`)
+    } catch (e) {
+      ctx.response.body = 'please submit a username'
+    }
+  })
+)
+
 app.use(
   route.get('/:name', async (ctx, username) => {
     const {error, feed, source} = await feedController.get(username)
